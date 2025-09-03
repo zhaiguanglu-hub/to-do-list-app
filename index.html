@@ -1,1 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do List App</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+    #todo-container { background: #fff; padding: 20px; border-radius: 8px; max-width: 400px; margin: auto; }
+    h2 { text-align: center; }
+    #todo-input { width: 70%; padding: 8px; }
+    #add-btn { padding: 8px 12px; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 8px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;}
+    button.delete { background: #ff4d4d; color: white; border: none; border-radius: 4px; padding: 4px 8px;}
+    button.delete:hover { background: #e60000; }
+  </style>
+</head>
+<body>
+  <div id="todo-container">
+    <h2>To-Do List</h2>
+    <input type="text" id="todo-input" placeholder="Add a new task...">
+    <button id="add-btn">Add</button>
+    <ul id="todo-list"></ul>
+  </div>
+  <script>
+   // 获取 DOM 元素
+const todoInput = document.getElementById('todo-input');
+const addBtn = document.getElementById('add-btn');
+const todoList = document.getElementById('todo-list');
 
+// 从 localStorage 加载待办列表
+function loadTodos() {
+  const todos = JSON.parse(localStorage.getItem('todos')) || [];
+  todoList.innerHTML = '';
+  todos.forEach((todo, index) => {
+    const li = document.createElement('li');
+    li.textContent = todo;
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.classList.add('delete');
+    delBtn.onclick = function() {
+      deleteTodo(index);
+    };
+    li.appendChild(delBtn);
+    todoList.appendChild(li);
+  });
+}
+
+// 保存待办列表到 localStorage
+function saveTodos(todos) {
+  localStorage.setItem('todos', JSON.stringify(todos));
+}
+
+// 添加新的待办事项
+addBtn.onclick = function() {
+  const value = todoInput.value.trim();
+  if (value) {
+    const todos = JSON.parse(localStorage.getItem('todos')) || [];
+    todos.push(value);
+    saveTodos(todos);
+    todoInput.value = '';
+    loadTodos();
+  }
+};
+
+// 删除待办事项
+function deleteTodo(index) {
+  const todos = JSON.parse(localStorage.getItem('todos')) || [];
+  todos.splice(index, 1);
+  saveTodos(todos);
+  loadTodos();
+}
+
+// 页面加载时显示待办列表
+window.onload = loadTodos;
+  </script>
+</body>
+</html>
